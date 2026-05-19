@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Thefieldofdreams.API/Thefieldofdreams.API.csproj" />
+  <Project Path="Thefieldofdreams.Application/Thefieldofdreams.Application.csproj" />
+  <Project Path="Thefieldofdreams.Domain/Thefieldofdreams.Domain.csproj" />
+  <Project Path="Thefieldofdreams.Infrastructure/Thefieldofdreams.Infrastructure.csproj" />
+</Solution>

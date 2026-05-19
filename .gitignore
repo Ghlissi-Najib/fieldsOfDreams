@@ -1,0 +1,174 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+
+
+############################
+# .NET / Visual Studio
+############################
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+**/bin/
+**/obj/
+# Static files
+wwwroot/
+# Logs
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Build artifacts
+artifacts/
+
+############################
+# NuGet
+############################
+
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+
+packages/
+!packages/build/
+
+############################
+# Node / Angular
+############################
+
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Angular build
+dist/
+tmp/
+out-tsc/
+.angular/cache/
+
+############################
+# Angular environment
+############################
+
+src/environments/environment*.ts
+!**/src/environments/environment.production.ts
+
+############################
+# Testing
+############################
+
+coverage/
+test-results/
+
+############################
+# OS files
+############################
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+############################
+# Environment variables
+############################
+
+.env
+.env.local
+.env.*.local
+
+############################
+# Misc
+############################
+
+.sass-cache/
+connect.lock
+libpeerconnection.log
+
+############################
+# Publish output
+############################
+
+publish/
+**/publish/
+
+############################
+# Temporary files
+############################
+
+*.tmp
+*.temp
+*.log
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+ThefieldofdreamsClient/dist
+
