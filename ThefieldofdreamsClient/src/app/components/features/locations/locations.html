@@ -1,0 +1,58 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>Locations</h1>
+    <p>Explore venues, restaurants, and attractions.</p>
+  </header>
+
+  <div class="page-filters">
+    @for (type of typeOptions; track type) {
+      <button class="filter-btn" [class.active]="typeFilter() === type" (click)="onTypeFilter(type)">
+        {{ type }}
+      </button>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading locations…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="page-grid">
+      @for (location of filteredLocations(); track location.id) {
+        <article class="card">
+          <div class="card__header">
+            <span class="badge badge--type">{{ location.type }}</span>
+            @if (location.isTourismSpot) {
+              <span class="badge badge--gem">Tourism Spot</span>
+            }
+          </div>
+          <h3 class="card__title">{{ location.name }}</h3>
+          @if (location.description) {
+            <p class="card__desc">{{ location.description }}</p>
+          }
+          <div class="card__footer">
+            @if (location.address) {
+              <span class="meta">{{ location.address }}</span>
+            }
+            @if (location.pointsBonus) {
+              <span class="points">+{{ location.pointsBonus }} pts on visit</span>
+            }
+          </div>
+        </article>
+      }
+      @if (filteredLocations().length === 0) {
+        <div class="page-empty"><p>No locations found for this filter.</p></div>
+      }
+    </div>
+  }
+</section>

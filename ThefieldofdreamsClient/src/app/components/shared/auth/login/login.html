@@ -1,0 +1,196 @@
+<div class="login-page">
+  <div class="login-bg-glow login-bg-glow--top"></div>
+  <div class="login-bg-glow login-bg-glow--bottom"></div>
+
+  <div class="login-card">
+    <!-- Brand -->
+    <div class="text-center mb-4">
+      <div class="login-logo">The Field <span>of Dreams</span></div>
+      <p class="login-subtitle">Your gateway to the beautiful game</p>
+    </div>
+
+    <!-- Auth Mode Tabs -->
+    <div class="auth-tabs mb-4">
+      <button class="auth-tab" [class.active]="mode === 'login'" (click)="setMode('login')">
+        <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+      </button>
+      <button class="auth-tab" [class.active]="mode === 'register'" (click)="setMode('register')">
+        <i class="bi bi-person-plus me-1"></i>Create Account
+      </button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" *ngIf="mode === 'login'" class="auth-form">
+      <div class="form-group mb-3">
+        <label class="form-label">
+          <i class="bi bi-envelope me-1"></i>Email
+        </label>
+        <input
+          type="email"
+          formControlName="email"
+          class="form-input"
+          placeholder="your@email.com"
+          [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
+        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <i class="bi bi-exclamation-circle me-1"></i>Please enter a valid email
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label">
+          <i class="bi bi-lock me-1"></i>Password
+        </label>
+        <input
+          type="password"
+          formControlName="password"
+          class="form-input"
+          placeholder="••••••••"
+          [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <i class="bi bi-exclamation-circle me-1"></i>Password is required
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span>Remember me</span>
+        </label>
+        <button type="button" class="forgot-link" (click)="onForgotPassword()">
+          <i class="bi bi-question-circle me-1"></i>Forgot password?
+        </button>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="!isLoading"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</span>
+        <span *ngIf="isLoading" class="d-flex align-items-center gap-2">
+          <span class="loading-spinner"></span>Signing in…
+        </span>
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" *ngIf="mode === 'register'" class="auth-form">
+      <div class="form-row-2 mb-3">
+        <div class="form-group">
+          <label class="form-label"><i class="bi bi-person me-1"></i>First Name</label>
+          <input
+            type="text"
+            formControlName="firstName"
+            class="form-input"
+            placeholder="First name"
+            [class.invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" />
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="bi bi-person me-1"></i>Last Name</label>
+          <input
+            type="text"
+            formControlName="lastName"
+            class="form-input"
+            placeholder="Last name"
+            [class.invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" />
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label"><i class="bi bi-envelope me-1"></i>Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          class="form-input"
+          placeholder="your@email.com"
+          [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
+        <div class="error-message" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          <span *ngIf="registerForm.get('email')?.errors?.['required']"><i class="bi bi-exclamation-circle me-1"></i>Email is required</span>
+          <span *ngIf="registerForm.get('email')?.errors?.['email']"><i class="bi bi-exclamation-circle me-1"></i>Enter a valid email</span>
+          <span *ngIf="registerForm.get('email')?.errors?.['disposableEmail']"><i class="bi bi-exclamation-circle me-1"></i>Disposable emails not allowed</span>
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label"><i class="bi bi-telephone me-1"></i>Phone (optional)</label>
+        <input type="tel" formControlName="phone" class="form-input" placeholder="+1 234 567 8900" />
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label"><i class="bi bi-lock me-1"></i>Password</label>
+        <input
+          type="password"
+          formControlName="password"
+          class="form-input"
+          placeholder="Create a password (min 6 chars)"
+          [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" />
+        <div class="error-message" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          <i class="bi bi-exclamation-circle me-1"></i>Password must be at least 6 characters
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label"><i class="bi bi-lock-fill me-1"></i>Confirm Password</label>
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          class="form-input"
+          placeholder="Confirm your password"
+          [class.invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" />
+        <div class="error-message" *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched">
+          <i class="bi bi-exclamation-circle me-1"></i>Passwords do not match
+        </div>
+      </div>
+
+      <div class="account-type-section mb-3">
+        <label class="form-label"><i class="bi bi-people me-1"></i>Account Type</label>
+        <div class="account-type-grid">
+          <div
+            class="account-type-card"
+            [class.active]="registerForm.get('accountType')?.value === 'player'"
+            (click)="registerForm.patchValue({ accountType: 'player' })">
+            <i class="bi bi-trophy account-type-icon"></i>
+            <div class="account-name">Player</div>
+            <div class="account-desc">Predict &amp; win rewards</div>
+          </div>
+          <div
+            class="account-type-card"
+            [class.active]="registerForm.get('accountType')?.value === 'business'"
+            (click)="registerForm.patchValue({ accountType: 'business' })">
+            <i class="bi bi-building account-type-icon"></i>
+            <div class="account-name">Business</div>
+            <div class="account-desc">Sponsorship &amp; ROI</div>
+          </div>
+        </div>
+      </div>
+
+      <label class="checkbox-label gdpr mb-4">
+        <input type="checkbox" formControlName="gdpr" />
+        <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+      </label>
+
+      <button type="submit" class="btn-submit" [disabled]="registerForm.invalid || isLoading">
+        <span *ngIf="!isLoading"><i class="bi bi-person-check me-2"></i>Create Account</span>
+        <span *ngIf="isLoading" class="d-flex align-items-center gap-2">
+          <span class="loading-spinner"></span>Creating account…
+        </span>
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>or continue with</span>
+    </div>
+
+    <!-- Social Login -->
+    <div class="social-login">
+      <button class="btn-social google" (click)="socialLogin('google')">
+        <i class="bi bi-google social-icon"></i>Google
+      </button>
+      <button class="btn-social whatsapp" (click)="socialLogin('whatsapp')">
+        <i class="bi bi-whatsapp social-icon"></i>WhatsApp
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-alert" *ngIf="errorMessage">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    </div>
+  </div>
+</div>

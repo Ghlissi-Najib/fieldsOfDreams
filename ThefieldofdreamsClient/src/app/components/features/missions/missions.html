@@ -1,0 +1,94 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>Missions</h1>
+    <p>Complete missions to earn points and unlock rewards.</p>
+  </header>
+
+  <div class="page-filters">
+    @for (type of typeOptions; track type) {
+      <button class="filter-btn" [class.active]="typeFilter() === type" (click)="onTypeFilter(type)">
+        {{ type }}
+      </button>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading missions…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="page-grid">
+      @for (mission of filteredMissions(); track mission.id) {
+        <article class="card" [class.card--completed]="mission.userMission?.isCompleted">
+
+          <div class="card__header">
+            <span class="badge badge--type">{{ mission.type }}</span>
+            <span class="badge" [ngClass]="getDifficultyClass(mission.difficulty)">{{ mission.difficulty }}</span>
+            @if (mission.userMission?.isCompleted) {
+              <span class="badge badge--done">Done</span>
+            } @else if (mission.userMission) {
+              <span class="badge badge--active">In Progress</span>
+            }
+          </div>
+
+          <h3 class="card__title">{{ mission.title }}</h3>
+          @if (mission.description) {
+            <p class="card__desc">{{ mission.description }}</p>
+          }
+
+          <!-- Progress bar (shown when user has enrolled) -->
+          @if (mission.userMission) {
+            <div class="mission-progress">
+              <div class="mission-progress__bar">
+                <div class="mission-progress__fill"
+                     [class.mission-progress__fill--done]="mission.userMission.isCompleted"
+                     [style.width.%]="progressPct(mission)">
+                </div>
+              </div>
+              <span class="mission-progress__label">
+                {{ mission.userMission.currentProgress }} / {{ mission.requiredProgress }}
+              </span>
+            </div>
+            @if (mission.userMission.isCompleted) {
+              <p class="mission-earned">+{{ mission.userMission.pointsAwarded }} pts earned</p>
+            }
+          }
+
+          <div class="card__footer">
+            <span class="points">+{{ mission.pointsReward }} pts</span>
+            @if (mission.xpValue) {
+              <span class="meta">{{ mission.xpValue }} XP</span>
+            }
+            @if (mission.endDate) {
+              <span class="expiry">Ends {{ mission.endDate | date:'d MMM y' }}</span>
+            }
+          </div>
+
+          <!-- CTA: Start Mission (passenger only, not yet enrolled, not completed) -->
+          @if (isPassenger() && !mission.userMission) {
+            <button
+              class="btn btn--start"
+              [disabled]="starting()[mission.id]"
+              (click)="startMission(mission)">
+              {{ starting()[mission.id] ? 'Starting…' : 'Start Mission' }}
+            </button>
+          }
+
+        </article>
+      }
+      @if (filteredMissions().length === 0) {
+        <div class="page-empty"><p>No missions found for this filter.</p></div>
+      }
+    </div>
+  }
+</section>

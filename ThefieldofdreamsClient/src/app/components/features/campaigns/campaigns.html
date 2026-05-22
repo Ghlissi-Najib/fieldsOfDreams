@@ -1,0 +1,55 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>Campaigns</h1>
+    <p>Manage and view all active marketing campaigns.</p>
+  </header>
+
+  <div class="page-filters">
+    @for (status of statusOptions; track status) {
+      <button class="filter-btn" [class.active]="statusFilter() === status" (click)="onStatusFilter(status)">
+        {{ status }}
+      </button>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading campaigns…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="page-grid">
+      @for (campaign of filteredCampaigns(); track campaign.id) {
+        <article class="card">
+          <div class="card__header">
+            <span class="badge badge--type">{{ campaign.type }}</span>
+            <span class="badge" [ngClass]="getStatusClass(campaign.status)">{{ campaign.status }}</span>
+          </div>
+          <h3 class="card__title">{{ campaign.name }}</h3>
+          @if (campaign.description) {
+            <p class="card__desc">{{ campaign.description }}</p>
+          }
+          <div class="card__footer">
+            <span class="meta">Start: {{ campaign.startDate | date:'d MMM y' }}</span>
+            <span class="meta">End: {{ campaign.endDate | date:'d MMM y' }}</span>
+            @if (campaign.budget) {
+              <span class="meta">Budget: ${{ campaign.budget | number:'1.0-0' }}</span>
+            }
+          </div>
+        </article>
+      }
+      @if (filteredCampaigns().length === 0) {
+        <div class="page-empty"><p>No campaigns found for this filter.</p></div>
+      }
+    </div>
+  }
+</section>

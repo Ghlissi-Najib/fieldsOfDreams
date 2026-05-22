@@ -1,0 +1,92 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>Rewards</h1>
+    <p>Redeem your points for exclusive rewards.</p>
+  </header>
+
+  <!-- Active campaigns strip -->
+  @if (activeCampaigns().length) {
+    <div class="campaign-strip">
+      @for (c of activeCampaigns(); track c.id) {
+        <span class="campaign-pill">
+          <span class="campaign-pill__dot"></span>
+          {{ c.name }}
+          <span class="campaign-pill__type">{{ c.type }}</span>
+          <span class="campaign-pill__exp">ends {{ c.endDate | date:'d MMM' }}</span>
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Flow disabled notice -->
+  @if (isPassenger() && !rewardFlowEnabled()) {
+    <div class="alert alert--info">No active campaign is currently offering rewards. Check back later!</div>
+  }
+
+  <div class="page-filters">
+    @for (type of typeOptions; track type) {
+      <button class="filter-btn" [class.active]="typeFilter() === type" (click)="onTypeFilter(type)">
+        {{ type }}
+      </button>
+    }
+  </div>
+
+  @if (successMessage()) {
+    <div class="alert alert--success">{{ successMessage() }}</div>
+  }
+
+  @if (error()) {
+    <div class="alert alert--error">{{ error() }}</div>
+  }
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading rewards…</p>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="page-grid">
+      @for (reward of filteredRewards(); track reward.id) {
+        <article class="card" [class.card--unavailable]="!isAvailable(reward)">
+          <div class="card__header">
+            <span class="badge badge--type">{{ reward.type }}</span>
+            @if (reward.isVIPOnly) {
+              <span class="badge badge--vip">VIP Only</span>
+            }
+          </div>
+          @if (reward.imageUrl) {
+            <img [src]="reward.imageUrl" [alt]="reward.name" class="card__image" />
+          }
+          <h3 class="card__title">{{ reward.name }}</h3>
+          @if (reward.description) {
+            <p class="card__desc">{{ reward.description }}</p>
+          }
+          <div class="card__footer">
+            <span class="points">{{ reward.pointsRequired }} pts</span>
+            <span class="meta">{{ reward.claimedCount }}/{{ reward.quantity }} claimed</span>
+            @if (reward.expiryDate) {
+              <span class="expiry">Expires {{ reward.expiryDate | date:'d MMM y' }}</span>
+            }
+          </div>
+          <div class="card__actions">
+            @if (isPassenger()) {
+              <button
+                class="btn btn--primary"
+                [disabled]="!isAvailable(reward) || !rewardFlowEnabled() || claimingId() === reward.id"
+                (click)="claimReward(reward)">
+                {{ claimingId() === reward.id ? 'Claiming...' : 'Claim Reward' }}
+              </button>
+            } @else {
+              <span class="reward-no-claim">Only passengers can claim rewards</span>
+            }
+          </div>
+        </article>
+      }
+      @if (filteredRewards().length === 0) {
+        <div class="page-empty"><p>No rewards available for this filter.</p></div>
+      }
+    </div>
+  }
+</section>

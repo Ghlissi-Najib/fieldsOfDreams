@@ -1,0 +1,50 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>QR Codes</h1>
+    <p>Manage QR codes for events and locations.</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading QR codes…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="page-grid">
+      @for (qr of qrCodes(); track qr.id) {
+        <article class="card">
+          <div class="card__header">
+            <span class="badge badge--type">{{ qr.type }}</span>
+            @if (qr.isLimitedTime) {
+              <span class="badge badge--active">Limited Time</span>
+            }
+          </div>
+          <h3 class="card__title">{{ qr.title }}</h3>
+          <p class="card__desc qr-code-value">{{ qr.code }}</p>
+          <div class="card__footer">
+            <span class="meta">Scans: {{ qr.currentScanCount }}/{{ qr.maxScans }}</span>
+            <span class="points">+{{ qr.pointsReward }} pts</span>
+            @if (qr.expiryDate) {
+              <span class="expiry">Expires {{ qr.expiryDate | date:'d MMM y' }}</span>
+            }
+          </div>
+          <div class="card__actions">
+            <button class="btn btn--danger" (click)="delete(qr.id)">Delete</button>
+          </div>
+        </article>
+      }
+      @if (qrCodes().length === 0) {
+        <div class="page-empty"><p>No QR codes found.</p></div>
+      }
+    </div>
+  }
+</section>

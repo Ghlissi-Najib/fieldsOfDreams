@@ -1,0 +1,172 @@
+<!-- ─── Merchant / Admin: Validate Passenger Promo Code ─────────────────────── -->
+@if (canValidatePerks()) {
+  <section class="page scanner-page">
+    <header class="page-hero">
+      <h1>Validate Perk / Promo Code</h1>
+      <p>Enter the passenger's promo code to mark it as claimed.</p>
+    </header>
+
+    @if (!perkValidationEnabled()) {
+      <div class="scanner-notice scanner-notice--warn">
+        <span class="notice-icon">⚠</span>
+        <span>No active campaign is currently accepting perk validation.</span>
+      </div>
+    }
+
+    @if (activeCampaigns().length) {
+      <div class="campaign-strip">
+        @for (c of activeCampaigns(); track c.id) {
+          <span class="campaign-pill">
+            <span class="campaign-pill__dot"></span>
+            {{ c.name }}
+            <span class="campaign-pill__exp">ends {{ c.endDate | date:'d MMM' }}</span>
+          </span>
+        }
+      </div>
+    }
+
+    <div class="scanner-card">
+      <div class="scanner-icon scanner-icon--merchant">✓</div>
+
+      <form (ngSubmit)="onValidatePerk()">
+        <div class="form-group">
+          <label for="promoCode">Promo Code</label>
+          <input
+            id="promoCode"
+            type="text"
+            class="form-input"
+            placeholder="Enter passenger promo code…"
+            [value]="promoCode()"
+            (input)="promoCode.set($any($event.target).value)"
+            [disabled]="isValidating()"
+          />
+        </div>
+        <button type="submit" class="btn btn--validate" [disabled]="isValidating() || !promoCode().trim()">
+          {{ isValidating() ? 'Validating...' : 'Validate Perk' }}
+        </button>
+      </form>
+
+      @if (validateResult()) {
+        <div class="alert" [class.alert--success]="validateResult()!.success" [class.alert--error]="!validateResult()!.success">
+          {{ validateResult()!.message }}
+        </div>
+      }
+
+      @if (error()) {
+        <div class="alert alert--error">{{ error() }}</div>
+      }
+    </div>
+  </section>
+}
+
+<!-- ─── Passenger: Scan Location QR Code ────────────────────────────────────── -->
+@if (isPassenger()) {
+  <section class="page scanner-page">
+    <header class="page-hero">
+      <h1>QR Scanner</h1>
+      <p>Scan a QR code to earn points instantly.</p>
+    </header>
+
+    <!-- ── LIVE MODE ── campaign active ────────────────────────────────── -->
+    @if (qrScanEnabled()) {
+
+      @if (activeCampaigns().length) {
+        <div class="campaign-strip">
+          @for (c of activeCampaigns(); track c.id) {
+            <span class="campaign-pill">
+              <span class="campaign-pill__dot"></span>
+              {{ c.name }}
+              <span class="campaign-pill__exp">ends {{ c.endDate | date:'d MMM' }}</span>
+            </span>
+          }
+        </div>
+      }
+
+      <div class="scanner-card">
+        <div class="scanner-icon">⬛</div>
+
+        <form (ngSubmit)="onScanQR()">
+          <div class="form-group">
+            <label for="qrCodeId">QR Code ID</label>
+            <input
+              id="qrCodeId"
+              type="text"
+              class="form-input"
+              placeholder="Enter QR code ID…"
+              [value]="qrCodeId()"
+              (input)="qrCodeId.set($any($event.target).value)"
+              [disabled]="isScanning()"
+            />
+          </div>
+          <button type="submit" class="btn btn--primary" [disabled]="isScanning() || !qrCodeId().trim()">
+            {{ isScanning() ? 'Scanning...' : 'Scan Code' }}
+          </button>
+        </form>
+
+        @if (success()) {
+          <div class="alert alert--success">{{ success() }}</div>
+        }
+        @if (error()) {
+          <div class="alert alert--error">{{ error() }}</div>
+        }
+        @if (lastScan()) {
+          <div class="scan-result">
+            <h3>Last Scan</h3>
+            <p>Points awarded: <strong>{{ lastScan()?.pointsAwarded ?? 0 }}</strong></p>
+            <p>Scanned at: <strong>{{ lastScan()?.scannedAt | date:'d MMM y, HH:mm' }}</strong></p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── SANDBOX MODE ── no active campaign ──────────────────────────── -->
+    @if (isSandboxMode()) {
+      <div class="scanner-notice scanner-notice--warn">
+        <span class="notice-icon">⚠</span>
+        <span>No live campaign right now — you're in <strong>Sandbox Mode</strong>. No points are awarded.</span>
+      </div>
+
+      <div class="scanner-card sandbox-card">
+        <div class="sandbox-badge">SANDBOX</div>
+        <div class="sandbox-heading">Practice your scan</div>
+        <p class="sandbox-sub">
+          Try the demo code below to see exactly how QR scanning works when a campaign goes live.
+          Your first real scan will earn you points automatically.
+        </p>
+
+        <form (ngSubmit)="onSandboxScan()">
+          <div class="form-group">
+            <label for="sandboxCode">Demo Code</label>
+            <div class="sandbox-input-row">
+              <input
+                id="sandboxCode"
+                type="text"
+                class="form-input form-input--sandbox"
+                [value]="sandboxCode()"
+                (input)="sandboxCode.set($any($event.target).value)"
+              />
+              <span class="sandbox-hint">Try: TEST2026</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn--sandbox">
+            Try Demo Scan
+          </button>
+        </form>
+
+        @if (sandboxResult()) {
+          <div class="alert sandbox-result"
+               [class.alert--success]="sandboxResult()!.success"
+               [class.alert--sandbox-fail]="!sandboxResult()!.success">
+            {{ sandboxResult()!.message }}
+          </div>
+          <button class="btn-reset" (click)="clearSandbox()">Reset</button>
+        }
+
+        <p class="sandbox-footer">
+          🔔 You'll be notified when a live campaign launches.
+        </p>
+      </div>
+    }
+
+  </section>
+}

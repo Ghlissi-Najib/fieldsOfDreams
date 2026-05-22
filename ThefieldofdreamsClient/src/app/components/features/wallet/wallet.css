@@ -1,0 +1,26 @@
+.page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; color: #eeeef5; }
+.page-hero { text-align: center; margin-bottom: 2rem; }
+.page-hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.page-hero p { color: #8888aa; }
+.page-loading { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 3rem; color: #8888aa; }
+.spinner { width: 40px; height: 40px; border: 3px solid #2a2a42; border-top-color: #00cfff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.page-error { text-align: center; padding: 2rem; color: #ff4560; }
+.retry-btn { margin-top: 1rem; padding: 0.5rem 1.25rem; border-radius: 8px; border: none; background: #ff4560; color: #fff; cursor: pointer; font-weight: 600; }
+.page-empty { text-align: center; color: #8888aa; padding: 3rem; }
+.wallet-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+.wallet-card { background: #0e0e1c; border: 1px solid #1f1f35; border-radius: 14px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.wallet-card--points { border-color: rgba(240,180,41,0.3); }
+.wallet-card__label { font-size: 0.75rem; color: #8888aa; text-transform: uppercase; letter-spacing: 0.05em; }
+.wallet-card__value { font-size: 2rem; font-weight: 700; color: #00cfff; }
+.wallet-card--points .wallet-card__value { color: #f0b429; }
+.section-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; }
+.txn-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.txn-item { background: #0e0e1c; border: 1px solid #1f1f35; border-radius: 10px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.txn-item__info { display: flex; flex-direction: column; gap: 0.2rem; }
+.txn-item__type { font-size: 0.875rem; font-weight: 600; }
+.txn-item__desc { font-size: 0.75rem; color: #8888aa; }
+.txn-item__date { font-size: 0.75rem; color: #8888aa; }
+.txn-item__amount { font-size: 1rem; font-weight: 700; white-space: nowrap; }
+.txn--credit { color: #00d97e; }
+.txn--debit { color: #ff4560; }

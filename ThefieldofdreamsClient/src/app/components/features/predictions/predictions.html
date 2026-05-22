@@ -1,0 +1,119 @@
+<section class="predictions-page">
+  <header class="pred-hero">
+    @if (isPassenger()) {
+      <h1>⚽ Make Your Predictions</h1>
+      <p>Predict match scores and earn points!</p>
+    } @else if (isAdmin()) {
+      <h1>⚽ Predictions Overview</h1>
+      <p class="pred-admin-notice">Matches are managed directly in Google Sheets. This is a read-only admin view.</p>
+    }
+  </header>
+
+  <!-- Active campaigns strip -->
+  @if (activeCampaigns().length) {
+    <div class="pred-campaign-strip">
+      @for (c of activeCampaigns(); track c.id) {
+        <span class="campaign-pill">
+          <span class="campaign-pill__dot"></span>
+          {{ c.name }}
+          <span class="campaign-pill__exp">ends {{ c.endDate | date:'d MMM' }}</span>
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Predictions flow disabled notice -->
+  @if (isPassenger() && !predictionsEnabled()) {
+    <div class="pred-notice pred-notice--warn">
+      No active prediction campaign right now. Predictions will open when the next campaign goes live.
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="pred-loading">
+      <div class="spinner"></div>
+      <p>Loading matches…</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="pred-error">
+      <p>{{ error() }}</p>
+      <button class="pred-retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  <!-- Cards -->
+  @if (!isLoading() && !error()) {
+    <div class="pred-grid">
+      @for (match of matches(); track match.id) {
+        <article class="pred-card">
+          <div class="pred-card__header">
+            <span class="pred-stage">{{ match.tournamentStage || 'Friendly' }}</span>
+            <span class="pred-status" [class.live]="match.status === 'Live'">
+              {{ getStatusIcon(match.status) }} {{ match.status }}
+            </span>
+          </div>
+
+          <div class="pred-teams">
+            <div class="pred-team">
+              <span class="pred-team-name">{{ match.homeTeam || 'Home' }}</span>
+              <input
+                type="number"
+                min="0"
+                class="score-input"
+                placeholder="0"
+                [value]="getPredictionForm(match.id).homeTeamScore ?? ''"
+                [readonly]="!isPassenger()"
+                (input)="isPassenger() && updateScore(match.id, 'homeTeamScore', $any($event.target).value)" />
+            </div>
+            <div class="pred-vs">vs</div>
+            <div class="pred-team">
+              <input
+                type="number"
+                min="0"
+                class="score-input"
+                placeholder="0"
+                [value]="getPredictionForm(match.id).awayTeamScore ?? ''"
+                [readonly]="!isPassenger()"
+                (input)="isPassenger() && updateScore(match.id, 'awayTeamScore', $any($event.target).value)" />
+              <span class="pred-team-name">{{ match.awayTeam || 'Away' }}</span>
+            </div>
+          </div>
+
+          <div class="pred-meta">
+            <span>🗓 {{ match.matchDateTime | date:'d MMM y, HH:mm' }}</span>
+            @if (match.stadium) {
+              <span>🏟 {{ match.stadium }}</span>
+            }
+            <span class="pred-points">⭐ Win {{ match.pointsForCorrectPrediction }} pts</span>
+          </div>
+
+          @if (isPassenger()) {
+            <button
+              class="pred-submit-btn"
+              [disabled]="isSubmitting(match.id)"
+              (click)="submitPrediction(match)">
+              @if (isSubmitting(match.id)) {
+                <span>Submitting…</span>
+              } @else {
+                <span>Submit Prediction</span>
+              }
+            </button>
+          } @else if (isAdmin()) {
+            <p class="pred-admin-label">Admin view — predictions submitted by passengers</p>
+          }
+        </article>
+      }
+
+      @if (matches().length === 0) {
+        <div class="pred-empty">
+          <p>No open matches available for predictions right now.</p>
+          <a routerLink="/matchs" class="pred-view-all">View all matches →</a>
+        </div>
+      }
+    </div>
+  }
+</section>

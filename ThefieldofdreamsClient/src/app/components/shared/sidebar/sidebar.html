@@ -1,0 +1,42 @@
+<aside
+  class="right-panel"
+  *ngIf="isLoggedIn && user"
+  [class.right-panel--collapsed]="!isExpanded"
+  [class.right-panel--hidden]="!isVisible">
+  <button
+    type="button"
+    class="right-panel__toggle"
+    (click)="togglePanel()"
+    [attr.aria-label]="isExpanded ? 'Collapse user panel' : 'Expand user panel'">
+    <i class="bi" [ngClass]="isExpanded ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
+  </button>
+
+  <div class="right-panel__header">
+    <span class="right-panel__avatar">{{ getInitials() }}</span>
+    <div class="right-panel__identity" *ngIf="isExpanded">
+      <p class="right-panel__name">{{ user.firstName || user.name }}</p>
+      <p class="right-panel__email">{{ user.email }}</p>
+    </div>
+  </div>
+
+  <div class="right-panel__stats" *ngIf="isExpanded">
+    <span><i class="bi bi-ticket-perforated"></i> {{ user.tickets || 0 }} tickets</span>
+    <span><i class="bi bi-star"></i> {{ user.points || 0 }} points</span>
+    <span *ngIf="user.currentLevel"><i class="bi bi-graph-up"></i> Level {{ user.currentLevel }}</span>
+  </div>
+
+  <nav class="right-panel__links" aria-label="User actions">
+    <a class="right-panel__link" *ngIf="canAccessAccountManagement()" routerLink="/profile" (click)="closePanel()">
+      <i class="bi bi-person-circle"></i>
+      <span *ngIf="isExpanded">Profile</span>
+    </a>
+    <a class="right-panel__link" *ngIf="canAccessAccountManagement()" routerLink="/settings" (click)="closePanel()">
+      <i class="bi bi-gear"></i>
+      <span *ngIf="isExpanded">Settings</span>
+    </a>
+    <button type="button" class="right-panel__link right-panel__link--logout" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+      <span *ngIf="isExpanded">Logout</span>
+    </button>
+  </nav>
+</aside>

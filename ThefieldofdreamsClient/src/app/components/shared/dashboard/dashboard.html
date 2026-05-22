@@ -1,0 +1,632 @@
+<section class="dashboard-page">
+
+  <!-- ─── Hero ──────────────────────────────────────────────────────────── -->
+  <article class="dash-hero">
+    <div class="dash-hero-left">
+      <div class="dash-role-badge">{{ roleLabel() }}</div>
+      <h1>Welcome back, <span class="dash-hero-name">{{ userName() }}</span></h1>
+      <p class="dash-hero-meta">
+        @if (passengerSummary()) {
+          {{ passengerSummary()!.totalPoints | number }} pts
+          · {{ passengerSummary()!.walletBalance | currency:'SAR':'symbol':'1.0-0' }} wallet
+          · {{ passengerSummary()!.missionsCompleted }} missions done
+        }
+        @if (adminSummary()) {
+          {{ adminSummary()!.totalUsers | number }} users
+          · {{ adminSummary()!.activeCampaigns }} active campaigns
+          · {{ adminSummary()!.totalWalletBalance | currency:'SAR':'symbol':'1.0-0' }} total balance
+        }
+        @if (merchantSummary()) {
+          {{ merchantSummary()!.totalScans | number }} scans
+          · {{ merchantSummary()!.totalQRCodes }} QR codes
+          · {{ merchantSummary()!.uniqueUsersScanned }} unique users
+        }
+      </p>
+    </div>
+    <div class="dash-hero-right">
+      <button class="export-btn" *ngIf="canViewAnalytics()" (click)="exportData()">
+        <i class="bi bi-download"></i> Export
+      </button>
+    </div>
+  </article>
+
+  <!-- ─── Loading / error states ────────────────────────────────────────── -->
+  <div class="dash-loading" *ngIf="loading()">
+    <div class="loading-spinner"></div>
+    <span>Loading dashboard…</span>
+  </div>
+
+  <div class="dash-error" *ngIf="error() && !loading()">
+    <i class="bi bi-exclamation-triangle"></i> {{ error() }}
+  </div>
+
+  <ng-container *ngIf="!loading() && !error()">
+
+    <!-- ─── Active Campaigns Banner (all roles) ───────────────────────────── -->
+    <section class="dash-campaigns" *ngIf="activeCampaigns().length">
+      <div class="dash-campaigns__header">
+        <span class="dash-campaigns__live-dot"></span>
+        <h3 class="dash-campaigns__title">Live Campaigns</h3>
+        <span class="dash-campaigns__count">{{ activeCampaigns().length }} active</span>
+      </div>
+      <div class="dash-campaigns__list">
+        @for (c of activeCampaigns(); track c.id) {
+          <div class="dash-campaign-pill">
+            <span class="dash-campaign-pill__name">{{ c.name }}</span>
+            <span class="dash-campaign-pill__type">{{ c.type }}</span>
+            <span class="dash-campaign-pill__exp">Ends {{ c.endDate | date:'d MMM y' }}</span>
+            <span class="dash-campaign-pill__pri" [title]="'Priority: ' + c.priority">P{{ c.priority }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         ADMIN / PARTNER DASHBOARD
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="isAdmin() || isPartner()">
+
+      <!-- Action panel -->
+      <section class="dash-panel" *ngIf="isAdmin()">
+        <div class="dash-panel__header">
+          <span class="dash-panel__icon">🛡️</span>
+          <h2>Admin Control Center</h2>
+        </div>
+        <div class="dash-actions">
+          <a class="dash-action-btn dash-action-btn--green" routerLink="/partners">
+            <i class="bi bi-diagram-3"></i> Partners &amp; Users
+          </a>
+          <a class="dash-action-btn dash-action-btn--cyan" routerLink="/campaigns">
+            <i class="bi bi-megaphone"></i> Campaigns
+          </a>
+          <a class="dash-action-btn" routerLink="/rewards"><i class="bi bi-gift"></i> Manage Rewards</a>
+          <a class="dash-action-btn" routerLink="/qr-codes"><i class="bi bi-qr-code"></i> QR Codes</a>
+          <a class="dash-action-btn" routerLink="/missions"><i class="bi bi-lightning-charge"></i> Missions</a>
+          <a class="dash-action-btn" routerLink="/locations"><i class="bi bi-geo-alt"></i> Locations</a>
+          <a class="dash-action-btn dash-action-btn--gold"
+             [href]="googleSheetsMatchesUrl || '#'"
+             [attr.target]="googleSheetsMatchesUrl ? '_blank' : null"
+             rel="noopener noreferrer">
+            <i class="bi bi-table"></i> Manage Matches (Google Sheets)
+          </a>
+        </div>
+      </section>
+
+      <section class="dash-panel" *ngIf="isPartner()">
+        <div class="dash-panel__header">
+          <span class="dash-panel__icon">🤝</span>
+          <h2>Partner Analytics View</h2>
+        </div>
+        <p class="dash-panel__desc">Read-only aggregate analytics — passenger activity, experience conversion rates, and referral performance.</p>
+        <div class="dash-actions">
+          <a class="dash-action-btn dash-action-btn--cyan" routerLink="/leaderboard"><i class="bi bi-trophy"></i> Leaderboard</a>
+          <a class="dash-action-btn" routerLink="/locations"><i class="bi bi-geo-alt"></i> Locations</a>
+        </div>
+      </section>
+
+      <!-- ── Summary cards ──────────────────────────────────────────────── -->
+      <div class="stats-grid" *ngIf="adminSummary() as s">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">👥</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalUsers | number }}</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">⚽</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalPredictions | number }}</div>
+            <div class="stat-label">Predictions</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--gold">📱</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalQRScans | number }}</div>
+            <div class="stat-label">QR Scans</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--purple">🎁</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalRewards | number }}</div>
+            <div class="stat-label">Rewards</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--orange">📢</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.activeCampaigns }}</div>
+            <div class="stat-label">Active Campaigns</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">⚡</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.missionsCompleted | number }}</div>
+            <div class="stat-label">Missions Done</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">💰</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalWalletBalance | number:'1.0-0' }}</div>
+            <div class="stat-label">Total Balance (SAR)</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--gold">🔗</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalReferrals | number }}</div>
+            <div class="stat-label">Referrals</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Match stats strip ─────────────────────────────────────────── -->
+      <div class="match-strip" *ngIf="matchStats() as m">
+        <div class="match-pill match-pill--total">
+          <span class="mp-num">{{ m.total }}</span><span class="mp-lbl">Total Matches</span>
+        </div>
+        <div class="match-pill match-pill--live">
+          <span class="mp-live-dot"></span>
+          <span class="mp-num">{{ m.live }}</span><span class="mp-lbl">Live</span>
+        </div>
+        <div class="match-pill match-pill--sched">
+          <span class="mp-num">{{ m.scheduled }}</span><span class="mp-lbl">Scheduled</span>
+        </div>
+        <div class="match-pill match-pill--done">
+          <span class="mp-num">{{ m.completed }}</span><span class="mp-lbl">Completed</span>
+        </div>
+      </div>
+
+      <!-- ── Top row: Users by role + Prediction accuracy ─────────────── -->
+      <div class="dash-grid">
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Users by Role</h2>
+          </div>
+          <div class="dash-chart">
+            <canvas baseChart
+              [type]="'doughnut'"
+              [data]="usersByRoleData()"
+              [options]="usersByRoleOpts">
+            </canvas>
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Prediction Accuracy</h2>
+            <span class="card-badge">{{ predictionAccuracyPct() }}% correct</span>
+          </div>
+          <div class="dash-chart">
+            <canvas baseChart
+              [type]="'doughnut'"
+              [data]="accuracyChartData()"
+              [options]="accuracyChartOpts">
+            </canvas>
+          </div>
+          <div class="dash-legend">
+            <span><i class="dot dot--green"></i>Correct</span>
+            <span><i class="dot dot--red"></i>Wrong</span>
+            <span><i class="dot dot--gold"></i>Pending</span>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- ── Weekly activity bar (full width) ─────────────────────────── -->
+      <article class="dash-card full-width">
+        <div class="card-header">
+          <h2 class="dash-card__title">Weekly Activity</h2>
+          <span class="card-badge">Last 7 days</span>
+        </div>
+        <div class="dash-chart tall">
+          <canvas baseChart
+            [type]="'bar'"
+            [data]="weeklyActivityData()"
+            [options]="weeklyActivityOpts">
+          </canvas>
+        </div>
+      </article>
+
+      <!-- ── Wallet trend + Rewards by type ───────────────────────────── -->
+      <div class="dash-grid">
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Wallet Balance Trend</h2>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'line'"
+              [data]="walletTrendData()"
+              [options]="walletTrendOpts">
+            </canvas>
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Rewards by Type</h2>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'pie'"
+              [data]="rewardsByTypeData()"
+              [options]="rewardsByTypeOpts">
+            </canvas>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- ── Top leaderboard table (full width) ───────────────────────── -->
+      <article class="dash-card full-width" *ngIf="topLeaderboard().length">
+        <div class="card-header">
+          <h2 class="dash-card__title">Top Leaderboard</h2>
+          <span class="card-badge">Top {{ topLeaderboard().length }}</span>
+        </div>
+        <div class="leader-table">
+          <div class="leader-row leader-header">
+            <span>Rank</span>
+            <span>Player</span>
+            <span>Points</span>
+          </div>
+          <div class="leader-row" *ngFor="let row of topLeaderboard()">
+            <span class="leader-rank" [class.leader-rank--gold]="row.rank === 1"
+                  [class.leader-rank--silver]="row.rank === 2"
+                  [class.leader-rank--bronze]="row.rank === 3">
+              {{ row.rank === 1 ? '🥇' : row.rank === 2 ? '🥈' : row.rank === 3 ? '🥉' : '#' + row.rank }}
+            </span>
+            <span class="leader-name">{{ row.userName }}</span>
+            <span class="leader-points">{{ row.points | number }} pts</span>
+          </div>
+        </div>
+      </article>
+
+    </ng-container>
+    <!-- ═══ END ADMIN/PARTNER ══════════════════════════════════════════════ -->
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PASSENGER DASHBOARD
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="isPassenger() && passengerData()">
+
+      <!-- Action panel -->
+      <section class="dash-panel">
+        <div class="dash-panel__header">
+          <span class="dash-panel__icon">🎯</span>
+          <h2>My Hub</h2>
+        </div>
+        <div class="dash-actions">
+          <a class="dash-action-btn dash-action-btn--green" routerLink="/swipe"><i class="bi bi-arrow-left-right"></i> Discover</a>
+          <a class="dash-action-btn dash-action-btn--cyan" routerLink="/predictions"><i class="bi bi-graph-up-arrow"></i> Predictions</a>
+          <a class="dash-action-btn" routerLink="/missions"><i class="bi bi-lightning-charge"></i> Missions</a>
+          <a class="dash-action-btn" routerLink="/my-rewards"><i class="bi bi-gift"></i> My Rewards</a>
+          <a class="dash-action-btn" routerLink="/wallet"><i class="bi bi-wallet2"></i> Wallet</a>
+          <a class="dash-action-btn" routerLink="/referrals"><i class="bi bi-people"></i> Referrals</a>
+          <a class="dash-action-btn" routerLink="/boarding-pass"><i class="bi bi-ticket-perforated"></i> Boarding Pass</a>
+          <a class="dash-action-btn" routerLink="/tourism-routes"><i class="bi bi-compass"></i> Tourism Routes</a>
+        </div>
+      </section>
+
+      <!-- Summary cards -->
+      <div class="stats-grid" *ngIf="passengerSummary() as s">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">⭐</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalPoints | number }}</div>
+            <div class="stat-label">Total Points</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">⚽</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalPredictions }}</div>
+            <div class="stat-label">Predictions</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">✓</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.correctPredictions }}</div>
+            <div class="stat-label">Correct</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--gold">⏳</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.pendingPredictions }}</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--purple">⚡</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.missionsCompleted }}</div>
+            <div class="stat-label">Missions Done</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--orange">🎁</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.rewardsClaimed }}</div>
+            <div class="stat-label">Rewards Claimed</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">📱</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.qrScansCount }}</div>
+            <div class="stat-label">QR Scans</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--gold">🔗</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.referralsCount }}</div>
+            <div class="stat-label">Referrals</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">🗺️</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.routesCompleted }}</div>
+            <div class="stat-label">Routes Done</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">💰</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.walletBalance | number:'1.2-2' }}</div>
+            <div class="stat-label">Balance (SAR)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts row 1: accuracy + activity breakdown -->
+      <div class="dash-grid">
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Prediction Accuracy</h2>
+            <span class="card-badge">{{ predictionAccuracyPct() }}% correct</span>
+          </div>
+          <div class="dash-chart">
+            <canvas baseChart
+              [type]="'doughnut'"
+              [data]="accuracyChartData()"
+              [options]="accuracyChartOpts">
+            </canvas>
+          </div>
+          <div class="dash-legend">
+            <span><i class="dot dot--green"></i>Correct</span>
+            <span><i class="dot dot--red"></i>Wrong</span>
+            <span><i class="dot dot--gold"></i>Pending</span>
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Activity Breakdown</h2>
+          </div>
+          <div class="dash-chart">
+            <canvas baseChart
+              [type]="'doughnut'"
+              [data]="activityBreakdownData()"
+              [options]="activityBreakdownOpts">
+            </canvas>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Charts row 2: weekly predictions + points trend -->
+      <div class="dash-grid">
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Weekly Predictions</h2>
+            <span class="card-badge">Last 7 days</span>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'bar'"
+              [data]="weeklyPredsData()"
+              [options]="weeklyPredsOpts">
+            </canvas>
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Points Trend</h2>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'line'"
+              [data]="pointsTrendData()"
+              [options]="pointsTrendOpts">
+            </canvas>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Mission progress (full width) -->
+      <article class="dash-card full-width" *ngIf="missionProgress().length">
+        <div class="card-header">
+          <h2 class="dash-card__title">Active Missions</h2>
+          <span class="card-badge">{{ missionProgress().length }} in progress</span>
+        </div>
+        <div class="mission-list">
+          <div class="mission-item" *ngFor="let m of missionProgress()">
+            <div class="mission-head">
+              <span class="mission-name">{{ m.name }}</span>
+              <span class="mission-type">{{ m.type }}</span>
+              <span class="mission-pct">{{ missionPct(m) }}%</span>
+            </div>
+            <div class="mission-bar">
+              <div class="mission-fill" [style.width.%]="missionPct(m)"></div>
+            </div>
+            <div class="mission-meta">{{ m.currentProgress }} / {{ m.required }}</div>
+          </div>
+        </div>
+      </article>
+
+    </ng-container>
+    <!-- ═══ END PASSENGER ══════════════════════════════════════════════════ -->
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MERCHANT DASHBOARD
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="isMerchant() && merchantData()">
+
+      <!-- Action panel -->
+      <section class="dash-panel">
+        <div class="dash-panel__header">
+          <span class="dash-panel__icon">🏪</span>
+          <h2>Merchant Hub</h2>
+        </div>
+        <div class="dash-actions">
+          <a class="dash-action-btn dash-action-btn--green" routerLink="/qr-scanner"><i class="bi bi-qr-code-scan"></i> Validate QR / Perks</a>
+          <a class="dash-action-btn dash-action-btn--cyan" routerLink="/qr-codes"><i class="bi bi-qr-code"></i> My QR Codes</a>
+          <a class="dash-action-btn" routerLink="/campaigns"><i class="bi bi-megaphone"></i> Campaigns</a>
+          <a class="dash-action-btn dash-action-btn--orange"
+             [href]="telegramBotUrl || '#'"
+             [attr.target]="telegramBotUrl ? '_blank' : null"
+             rel="noopener noreferrer">
+            <i class="bi bi-telegram"></i> Live Slots (Telegram Bot)
+          </a>
+        </div>
+      </section>
+
+      <!-- Summary cards -->
+      <div class="stats-grid" *ngIf="merchantSummary() as s">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--cyan">📱</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalQRCodes }}</div>
+            <div class="stat-label">QR Codes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--green">🔍</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalScans | number }}</div>
+            <div class="stat-label">Total Scans</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--orange">📢</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.activeCampaigns }}</div>
+            <div class="stat-label">Active Campaigns</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--gold">⭐</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.totalPointsGiven | number }}</div>
+            <div class="stat-label">Points Given</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-icon--purple">👥</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ s.uniqueUsersScanned | number }}</div>
+            <div class="stat-label">Unique Users</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scans per day bar (full width) -->
+      <article class="dash-card full-width">
+        <div class="card-header">
+          <h2 class="dash-card__title">Scans &amp; Points per Day</h2>
+          <span class="card-badge">Last 7 days</span>
+        </div>
+        <div class="dash-chart tall">
+          <canvas baseChart
+            [type]="'bar'"
+            [data]="scansByDayData()"
+            [options]="scansByDayOpts">
+          </canvas>
+        </div>
+      </article>
+
+      <!-- QR performance + Points by code -->
+      <div class="dash-grid">
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">QR Code Performance</h2>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'bar'"
+              [data]="qrPerfData()"
+              [options]="qrPerfOpts">
+            </canvas>
+          </div>
+        </article>
+
+        <article class="dash-card">
+          <div class="card-header">
+            <h2 class="dash-card__title">Points Given by Code</h2>
+          </div>
+          <div class="dash-chart tall">
+            <canvas baseChart
+              [type]="'pie'"
+              [data]="pointsByCodeData()"
+              [options]="pointsByCodeOpts">
+            </canvas>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- QR code performance table -->
+      <article class="dash-card full-width" *ngIf="qrPerformance().length">
+        <div class="card-header">
+          <h2 class="dash-card__title">QR Code Details</h2>
+        </div>
+        <div class="qr-table">
+          <div class="qr-row qr-header">
+            <span>Title</span>
+            <span>Code</span>
+            <span>Scans</span>
+            <span>Limit</span>
+            <span>Points</span>
+            <span>Usage</span>
+          </div>
+          <div class="qr-row" *ngFor="let q of qrPerformance()">
+            <span class="qr-title">{{ q.title }}</span>
+            <span class="qr-code-val">{{ q.code }}</span>
+            <span class="qr-num">{{ q.scans }}</span>
+            <span class="qr-num muted">{{ q.maxScans || '∞' }}</span>
+            <span class="qr-num">{{ q.pointsAwarded | number }}</span>
+            <span class="qr-usage">
+              <div class="qr-bar">
+                <div class="qr-fill"
+                  [style.width.%]="q.maxScans > 0 ? (q.scans / q.maxScans * 100) : 100"
+                  [class.qr-fill--full]="q.maxScans > 0 && q.scans >= q.maxScans">
+                </div>
+              </div>
+            </span>
+          </div>
+        </div>
+      </article>
+
+    </ng-container>
+    <!-- ═══ END MERCHANT ═══════════════════════════════════════════════════ -->
+
+  </ng-container>
+
+</section>

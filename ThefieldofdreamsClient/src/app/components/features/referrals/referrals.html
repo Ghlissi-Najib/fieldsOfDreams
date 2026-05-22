@@ -1,0 +1,59 @@
+<section class="page referrals-page">
+  <header class="page-hero">
+    <h1>Referrals</h1>
+    <p>Invite friends and earn bonus points when they join.</p>
+  </header>
+
+  <div class="referrals-stats">
+    <div class="stat-card">
+      <span class="stat-card__label">Total Referrals</span>
+      <span class="stat-card__value">{{ referrals().length }}</span>
+    </div>
+    <div class="stat-card stat-card--success">
+      <span class="stat-card__label">Completed</span>
+      <span class="stat-card__value">{{ completedCount }}</span>
+    </div>
+    <div class="stat-card stat-card--points">
+      <span class="stat-card__label">Points Earned</span>
+      <span class="stat-card__value">{{ totalPoints }}</span>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading referrals…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="referrals-list">
+      @for (referral of referrals(); track referral.id) {
+        <div class="referral-item">
+          <div class="referral-item__info">
+            <span class="referral-item__id">Referral #{{ referral.id.slice(0, 8) }}</span>
+            <span class="referral-item__date">{{ referral.createdAt | date:'d MMM y' }}</span>
+          </div>
+          <div class="referral-item__meta">
+            <span class="badge" [class.badge--success]="referral.isCompleted" [class.badge--pending]="!referral.isCompleted">
+              {{ referral.isCompleted ? 'Completed' : 'Pending' }}
+            </span>
+            @if (referral.isCompleted) {
+              <span class="points">+{{ referral.pointsAwarded }} pts</span>
+            }
+          </div>
+        </div>
+      }
+      @if (referrals().length === 0) {
+        <div class="page-empty"><p>No referrals yet. Start inviting friends!</p></div>
+      }
+    </div>
+  }
+</section>

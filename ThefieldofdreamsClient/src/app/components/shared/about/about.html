@@ -1,0 +1,193 @@
+<div class="about-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge" data-aos="fade-up">
+        <span class="badge-line"></span>
+        A DIFFERENT KIND OF JOURNEY
+      </div>
+      <h1 data-aos="fade-up" data-aos-delay="100">
+        We don't list<br>places. We filter<br>what's <span class="highlight">worth</span><br>your time.
+      </h1>
+      <div class="hero-quote" data-aos="fade-up" data-aos-delay="200">
+        <div class="quote-mark">"</div>
+        <blockquote>
+          I hope for nothing. I fear nothing. I am free.
+          <cite>— Nikos Kazantzakis</cite>
+        </blockquote>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Discover more</span>
+      <div class="scroll-arrow">↓</div>
+    </div>
+  </section>
+
+  <!-- Trust Strip -->
+  <div class="trust-strip">
+    <div class="trust-item">
+      <span class="trust-icon">✓</span>
+      <span>Local experiences</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-icon">🤝</span>
+      <span>Real people</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-icon">🔗</span>
+      <span>Direct connection</span>
+    </div>
+  </div>
+
+  <!-- Origin Story -->
+  <section class="origin-section">
+    <div class="section-badge">WHO WE ARE</div>
+    <h2 class="section-title">Born from<br>the island <span class="highlight">itself</span></h2>
+    <div class="origin-quote">
+      <div class="quote-icon">"</div>
+      <p>CreteVC was born from a belief that true journeys are not defined by distance — but by the feeling of freedom, discovery, and becoming.</p>
+    </div>
+    <div class="origin-content">
+      <p>The Crete Vacation Channel delivers an engaging overview of everything worth seeing and doing during your stay. As Crete natives, we carry long-standing experience in the island's tourism industry — from restaurants and museums to retail and local culture.</p>
+      <p>It is an honour to dedicate our work to supporting tourism and connecting travelers with our local community. Above all, it is a privilege to spend our working days taking a staycation in our own backyard.</p>
+      <p>We hand-select local partners who embody our values of Intentional Simplicity and Human Connection. Every restaurant, boutique, or guide we feature is more than a service — it is a vital chapter in your personal story of Crete.</p>
+      <div class="highlight-box">
+        <span>✨</span>
+        <p>These are family-run tavernas that have been feeding the village for three generations. Winemakers who still harvest by hand. Guides who grew up in the gorges they now lead you through. Local businesses that exist because of the community — and give back to it every day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Counter -->
+  <div class="stats-section">
+    <div class="stat-card" *ngFor="let stat of stats" [attr.data-target]="stat.value">
+      <div class="stat-number">
+        <span class="counter" [attr.data-count]="stat.value">0</span>
+        <span class="stat-suffix">{{ stat.suffix }}</span>
+      </div>
+      <div class="stat-label">{{ stat.label }}</div>
+      <div class="stat-desc">{{ stat.desc }}</div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <section class="categories-section">
+    <div class="section-badge">WHAT WE CURATE</div>
+    <h2 class="section-title">Categories <span class="highlight">&amp;</span> Partners</h2>
+    
+    <div class="categories-grid">
+      <div class="category-card" *ngFor="let cat of categories" [class]="cat.class">
+        <div class="card-icon">{{ cat.icon }}</div>
+        <div class="card-badge">{{ cat.badge }}</div>
+        <h3 class="card-title">{{ cat.title }}</h3>
+        <p class="card-desc">{{ cat.desc }}</p>
+        <a routerLink="/swipe" class="card-link">Discover →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Local Impact -->
+  <section class="impact-section">
+    <div class="impact-bg"></div>
+    <div class="impact-content">
+      <div class="section-badge light">WHY LOCAL MATTERS</div>
+      <h2 class="section-title light">The people<br>behind the <span class="highlight">place</span></h2>
+      <p class="impact-text">Crete is not a backdrop. It is a living community. When you book through CreteVC, your money doesn't flow into a call centre or a global OTA. It goes directly to the person who made your wine, cooked your food, or opened a gate to a field no tourist map shows.</p>
+      
+      <div class="impact-features">
+        <div class="impact-feature" *ngFor="let feature of localFeatures">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <div class="feature-content">
+            <h4>{{ feature.title }}</h4>
+            <p>{{ feature.desc }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="impact-quote">
+        <span class="quote-mark">"</span>
+        <p>We don't feature businesses. We introduce you to people.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="philosophy-section">
+    <div class="section-badge">OUR PHILOSOPHY</div>
+    <h2 class="section-title">Travel as<br><span class="highlight">transformation</span></h2>
+    <div class="philosophy-grid">
+      <div class="philosophy-card" *ngFor="let item of philosophy">
+        <div class="card-number">{{ item.number }}</div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.desc }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="values-section">
+    <div class="section-badge">WHAT WE STAND FOR</div>
+    <h2 class="section-title">Our <span class="highlight">Values</span></h2>
+    
+    <div class="values-timeline">
+      <div class="value-item" *ngFor="let value of values; let i = index">
+        <div class="value-marker">
+          <div class="marker-dot"></div>
+          <div class="marker-line" *ngIf="i < values.length - 1"></div>
+        </div>
+        <div class="value-content">
+          <div class="value-number">0{{ i + 1 }}</div>
+          <h3>{{ value.title }}</h3>
+          <p>{{ value.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Statement -->
+  <div class="mission-statement">
+    <div class="mission-icon">🎯</div>
+    <h3>Our Mission</h3>
+    <p>To create unique experiences that connect desire with reality.<br>Not by promising more — but by making every step feel meaningful.</p>
+  </div>
+
+  <!-- What Sets Us Apart -->
+  <section class="apart-section">
+    <div class="section-badge">THE DIFFERENCE</div>
+    <h2 class="section-title">What sets<br>us <span class="highlight">apart</span></h2>
+    <p class="apart-intro">In a world of instant offers and endless noise, CreteVC moves differently. We replace passive browsing with active experience.</p>
+    
+    <div class="apart-grid">
+      <div class="apart-card" *ngFor="let item of apartFeatures; let i = index">
+        <div class="card-number">{{ (i + 1).toString().padStart(2, '0') }}</div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.desc }}</p>
+        <div class="card-arrow">→</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision -->
+  <section class="vision-section">
+    <div class="section-badge">THE VISION</div>
+    <h2 class="section-title">A new way<br>of <span class="highlight">engaging</span></h2>
+    <div class="vision-quote">
+      <div class="quote-icon">💭</div>
+      <p>"The most meaningful journeys are not those you simply complete — but those that change how you feel before you even arrive."</p>
+    </div>
+    <p class="vision-text">CreteVC is not just a platform. It is a new way of engaging with travel — refined, immersive, and continuous. Inspired by the spirit of Nikos Kazantzakis and the land he called home, we are building something that lasts beyond the trip.</p>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>This is not about<br>chasing attention.</h2>
+      <p>It is about connecting you with the real Crete — the local people, the hidden places, the stories that don't appear on any booking platform.</p>
+      <div class="cta-buttons">
+        <a routerLink="/swipe" class="btn-primary">Discover Experiences →</a>
+        <a routerLink="/partners" class="btn-secondary">Partner with CreteVC</a>
+      </div>
+    </div>
+  </section>
+</div>

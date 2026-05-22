@@ -1,0 +1,48 @@
+.page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; color: #eeeef5; }
+.page-hero { text-align: center; margin-bottom: 2rem; }
+.page-hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.page-hero p { color: #8888aa; }
+.scanner-page { display: flex; flex-direction: column; align-items: center; }
+.scanner-card { background: #0e0e1c; border: 1px solid #1f1f35; border-radius: 14px; padding: 2rem; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 1.5rem; }
+.scanner-icon { font-size: 4rem; text-align: center; color: #00cfff; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-group label { font-size: 0.875rem; color: #8888aa; }
+.form-input { background: #07070f; border: 1px solid #2a2a42; border-radius: 8px; padding: 0.75rem 1rem; color: #eeeef5; font-size: 1rem; width: 100%; box-sizing: border-box; }
+.form-input:focus { outline: none; border-color: #00cfff; }
+.btn { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; }
+.btn--primary { background: #00cfff; color: #07070f; }
+.btn--primary:hover:not(:disabled) { background: #00b8e6; }
+.btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; }
+.alert--success { background: rgba(0,217,126,0.15); color: #00d97e; border: 1px solid rgba(0,217,126,0.3); }
+.alert--error { background: rgba(255,69,96,0.15); color: #ff4560; border: 1px solid rgba(255,69,96,0.3); }
+.scan-result { background: #07070f; border-radius: 8px; padding: 1rem; }
+.scan-result h3 { margin: 0 0 0.5rem; font-size: 0.875rem; color: #8888aa; text-transform: uppercase; letter-spacing: 0.05em; }
+.scan-result p { margin: 0.25rem 0; font-size: 0.875rem; }
+.scanner-icon--merchant { color: #00d97e; }
+.btn--validate { background: #00d97e; color: #07070f; }
+.btn--validate:hover:not(:disabled) { background: #00b86a; }
+.btn--validate:disabled { opacity: 0.5; cursor: not-allowed; }
+.scanner-notice { width: 100%; max-width: 480px; padding: 1rem 1.25rem; border-radius: 12px; font-size: 0.875rem; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+.scanner-notice--warn { background: #0e0e1c; color: #f0b429; border: 1px solid rgba(240,180,41,0.35); }
+.notice-icon { font-size: 1.25rem; line-height: 1; flex-shrink: 0; margin-top: 0.05rem; }
+.campaign-strip { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+.campaign-pill { display: flex; align-items: center; gap: 0.4rem; background: rgba(0,207,255,0.08); border: 1px solid rgba(0,207,255,0.2); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.75rem; color: #00cfff; }
+.campaign-pill__dot { width: 6px; height: 6px; border-radius: 50%; background: #00d97e; flex-shrink: 0; }
+.campaign-pill__exp { opacity: 0.5; }
+
+/* ── Sandbox Mode ────────────────────────────────────────────────────────── */
+.sandbox-card { border-color: rgba(240,180,41,0.2); position: relative; overflow: hidden; }
+.sandbox-card::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 18px, rgba(240,180,41,0.025) 18px, rgba(240,180,41,0.025) 19px); pointer-events: none; }
+.sandbox-badge { display: inline-block; background: rgba(240,180,41,0.15); color: #f0b429; border: 1px solid rgba(240,180,41,0.4); border-radius: 4px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; padding: 0.2rem 0.5rem; text-transform: uppercase; align-self: flex-start; }
+.sandbox-heading { font-size: 1.1rem; font-weight: 700; color: #eeeef5; }
+.sandbox-sub { font-size: 0.875rem; color: #8888aa; margin: 0; line-height: 1.55; }
+.form-input--sandbox { font-family: 'Courier New', monospace; font-weight: 700; letter-spacing: 0.08em; color: #f0b429; }
+.sandbox-input-row { display: flex; align-items: center; gap: 0.75rem; }
+.sandbox-hint { font-size: 0.75rem; color: #8888aa; white-space: nowrap; }
+.btn--sandbox { background: transparent; color: #f0b429; border: 1.5px dashed rgba(240,180,41,0.5); border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+.btn--sandbox:hover { background: rgba(240,180,41,0.08); border-color: #f0b429; }
+.alert--sandbox-fail { background: rgba(255,69,96,0.1); color: #ff6b6b; border: 1px solid rgba(255,69,96,0.25); }
+.btn-reset { background: none; border: none; color: #8888aa; font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 0.25rem 0; align-self: center; }
+.btn-reset:hover { color: #eeeef5; }
+.sandbox-footer { font-size: 0.8rem; color: #8888aa; text-align: center; margin: 0; }

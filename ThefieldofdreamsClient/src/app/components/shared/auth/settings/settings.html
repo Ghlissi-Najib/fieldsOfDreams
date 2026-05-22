@@ -1,0 +1,37 @@
+<section class="settings-page">
+  <header class="settings-hero">
+    <h1>Settings</h1>
+    <p>Manage your account preferences and security.</p>
+  </header>
+
+  <!-- Change Password -->
+  <div class="settings-card">
+    <h2 class="settings-card__title">🔒 Change Password</h2>
+    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" formControlName="newPassword" placeholder="Minimum 6 characters" />
+        @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']) {
+          <span class="form-error">Password must be at least 6 characters.</span>
+        }
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" formControlName="confirmPassword" placeholder="Re-enter new password" />
+        @if (passwordForm.touched && passwordForm.errors?.['mismatch']) {
+          <span class="form-error">Passwords do not match.</span>
+        }
+      </div>
+      <button type="submit" class="settings-btn" [disabled]="isSaving || passwordForm.invalid">
+        {{ isSaving ? 'Saving…' : 'Update Password' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="settings-card danger-zone">
+    <h2 class="settings-card__title">⚠️ Danger Zone</h2>
+    <p>Sign out from your current session.</p>
+    <button class="settings-btn settings-btn--danger" (click)="onLogout()">Sign Out</button>
+  </div>
+</section>

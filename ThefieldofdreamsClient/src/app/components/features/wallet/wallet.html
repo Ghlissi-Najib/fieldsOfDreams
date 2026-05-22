@@ -1,0 +1,62 @@
+<section class="page wallet-page">
+  <header class="page-hero">
+    <h1>My Wallet</h1>
+    <p>Track your balance, points, and transaction history.</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading wallet…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error() && !wallet()) {
+    <div class="page-empty">
+      <p>No wallet found for your account. Wallet is created automatically when you earn your first points.</p>
+    </div>
+  }
+
+  @if (!isLoading() && !error() && wallet()) {
+    <div class="wallet-summary">
+      <div class="wallet-card">
+        <span class="wallet-card__label">Balance</span>
+        <span class="wallet-card__value">${{ wallet()?.balance | number:'1.2-2' }}</span>
+      </div>
+      <div class="wallet-card wallet-card--points">
+        <span class="wallet-card__label">Points</span>
+        <span class="wallet-card__value">{{ wallet()?.points | number }}</span>
+      </div>
+    </div>
+
+    <h2 class="section-title">Transaction History</h2>
+
+    @if (transactions().length === 0) {
+      <div class="page-empty"><p>No transactions yet.</p></div>
+    } @else {
+      <div class="txn-list">
+        @for (txn of transactions(); track txn.id) {
+          <div class="txn-item">
+            <div class="txn-item__info">
+              <span class="txn-item__type">{{ txn.type }}</span>
+              @if (txn.description) {
+                <span class="txn-item__desc">{{ txn.description }}</span>
+              }
+              <span class="txn-item__date">{{ txn.createdAt | date:'d MMM y, HH:mm' }}</span>
+            </div>
+            <div class="txn-item__amount" [ngClass]="getTransactionClass(txn.type)">
+              {{ getTransactionSign(txn.type) }}${{ txn.amount | number:'1.2-2' }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</section>

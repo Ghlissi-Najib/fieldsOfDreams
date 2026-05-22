@@ -1,0 +1,221 @@
+.predictions-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  color: #eeeef5;
+}
+
+.pred-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.pred-hero h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.pred-hero p {
+  color: #8888aa;
+}
+
+/* Loading */
+.pred-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: #8888aa;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #2a2a42;
+  border-top-color: #00d97e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error */
+.pred-error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff4560;
+}
+
+.pred-retry-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  background: #ff4560;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Grid */
+.pred-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Card */
+.pred-card {
+  background: #0e0e1c;
+  border: 1px solid #1f1f35;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pred-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.pred-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pred-stage {
+  font-size: 0.75rem;
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pred-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(0, 207, 255, 0.15);
+  color: #00cfff;
+}
+
+.pred-status.live {
+  background: rgba(255, 69, 96, 0.15);
+  color: #ff4560;
+}
+
+/* Teams row */
+.pred-teams {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.pred-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.pred-team-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.pred-vs {
+  color: #8888aa;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.score-input {
+  width: 64px;
+  text-align: center;
+  background: #12122a;
+  border: 1px solid #2a2a42;
+  border-radius: 8px;
+  color: #eeeef5;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.4rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.score-input:focus {
+  border-color: #00d97e;
+}
+
+/* Meta */
+.pred-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #8888aa;
+  border-top: 1px solid #1f1f35;
+  padding-top: 0.75rem;
+}
+
+.pred-points {
+  color: #f0b429;
+  font-weight: 600;
+}
+
+/* Submit */
+.pred-submit-btn {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #00d97e, #00cfff);
+  color: #07070f;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.pred-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pred-submit-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* Empty */
+.pred-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #8888aa;
+  padding: 3rem;
+}
+
+.pred-view-all {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #00cfff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pred-notice { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem; text-align: center; margin-bottom: 1.25rem; }
+.pred-notice--warn { background: rgba(240,180,41,0.1); color: #f0b429; border: 1px solid rgba(240,180,41,0.3); }
+.pred-campaign-strip { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+.campaign-pill { display: flex; align-items: center; gap: 0.4rem; background: rgba(0,207,255,0.08); border: 1px solid rgba(0,207,255,0.2); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.75rem; color: #00cfff; }
+.campaign-pill__dot { width: 6px; height: 6px; border-radius: 50%; background: #00d97e; flex-shrink: 0; }
+.campaign-pill__exp { opacity: 0.5; }

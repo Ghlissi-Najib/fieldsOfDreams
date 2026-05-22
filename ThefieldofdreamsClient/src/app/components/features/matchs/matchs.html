@@ -1,0 +1,108 @@
+<section class="matchs-page">
+  <header class="matchs-hero">
+    <div class="matchs-hero-content">
+      <h1>⚽ Matches</h1>
+      <p>Browse upcoming, live, and completed matches.</p>
+    </div>
+    @if (isAdmin()) {
+      <a class="matchs-admin-btn"
+         [href]="googleSheetsUrl || 'javascript:void(0)'"
+         [class.matchs-admin-btn]="!googleSheetsUrl"
+         [attr.target]="googleSheetsUrl ? '_blank' : null"
+         rel="noopener noreferrer">
+        &#9776; Manage Matches in Google Sheets
+      </a>
+    }
+  </header>
+
+  <!-- Status Filter -->
+  <div class="matchs-filters">
+    @for (status of statusOptions; track status) {
+      <button
+        class="matchs-filter-btn"
+        [class.active]="statusFilter() === status"
+        (click)="onStatusFilter(status)">
+        {{ status }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="matchs-loading">
+      <div class="spinner"></div>
+      <p>Loading matches…</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="matchs-error">
+      <p>{{ error() }}</p>
+      <button class="matchs-retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  <!-- Cards -->
+  @if (!isLoading() && !error()) {
+    <div class="matchs-grid">
+      @for (match of filteredMatches(); track match.id) {
+        <article class="match-card">
+          <div class="match-card__header">
+            <span class="match-stage">{{ match.tournamentStage || 'Friendly' }}</span>
+            <span class="match-status" [ngClass]="getStatusClass(match.status)">
+              {{ getStatusIcon(match.status) }} {{ match.status }}
+            </span>
+          </div>
+
+          <div class="match-teams">
+            <div class="team home-team">
+              @if (getFlagUrl(match.homeTeam); as flagUrl) {
+                <img class="team-flag" [src]="flagUrl" [alt]="getTeamName(match.homeTeam)" loading="lazy">
+              }
+              <span class="team-name">{{ getTeamName(match.homeTeam) }}</span>
+              @if (match.status === 'Completed' || match.status === 'Live') {
+                <span class="team-score">{{ match.homeTeamScore ?? '-' }}</span>
+              }
+            </div>
+            <div class="match-vs">vs</div>
+            <div class="team away-team">
+              @if (match.status === 'Completed' || match.status === 'Live') {
+                <span class="team-score">{{ match.awayTeamScore ?? '-' }}</span>
+              }
+              <span class="team-name">{{ getTeamName(match.awayTeam) }}</span>
+              @if (getFlagUrl(match.awayTeam); as flagUrl) {
+                <img class="team-flag" [src]="flagUrl" [alt]="getTeamName(match.awayTeam)" loading="lazy">
+              }
+            </div>
+          </div>
+
+          <div class="match-card__footer">
+            <span class="match-datetime">🗓 {{ match.matchDateTime | date:'d MMM y, HH:mm' }}</span>
+            @if (match.stadium) {
+              <span class="match-stadium">🏟 {{ match.stadium }}</span>
+            }
+            <span class="match-points">⭐ {{ match.pointsForCorrectPrediction }} pts</span>
+          </div>
+
+          @if (isAdmin()) {
+            <div class="match-card__actions">
+              <button
+                class="match-delete-btn"
+                [disabled]="deletingId() === match.id"
+                (click)="deleteMatch(match.id)">
+                {{ deletingId() === match.id ? 'Deleting…' : '🗑 Delete' }}
+              </button>
+            </div>
+          }
+        </article>
+      }
+
+      @if (filteredMatches().length === 0) {
+        <div class="matchs-empty">
+          <p>No matches found for this filter.</p>
+        </div>
+      }
+    </div>
+  }
+</section>

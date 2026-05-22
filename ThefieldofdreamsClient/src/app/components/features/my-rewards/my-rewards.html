@@ -1,0 +1,58 @@
+<section class="page">
+  <header class="page-hero">
+    <h1>My Rewards</h1>
+    <p>View and manage your claimed rewards.</p>
+  </header>
+
+  <div class="page-actions">
+    <button class="filter-btn" [class.active]="!showUsed()" (click)="toggleShowUsed()">Active Only</button>
+    <button class="filter-btn" [class.active]="showUsed()" (click)="toggleShowUsed()">Show All</button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-loading">
+      <div class="spinner"></div>
+      <p>Loading your rewards…</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="page-error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="page-grid">
+      @for (reward of displayedRewards(); track reward.id) {
+        <article class="card">
+          <div class="card__header">
+            <span class="badge badge--type">{{ reward.rewardType }}</span>
+            <span class="badge" [ngClass]="getStatusClass(reward)">{{ getStatusLabel(reward) }}</span>
+          </div>
+          <h3 class="card__title">{{ reward.rewardName }}</h3>
+          @if (reward.rewardDescription) {
+            <p class="card__desc">{{ reward.rewardDescription }}</p>
+          }
+          @if (reward.usageCode) {
+            <div class="usage-code">
+              <span class="usage-code__label">Code:</span>
+              <strong class="usage-code__value">{{ reward.usageCode }}</strong>
+            </div>
+          }
+          <div class="card__footer">
+            <span class="meta">Claimed {{ reward.claimedAt | date:'d MMM y' }}</span>
+            <span class="meta">{{ reward.pointsSpent }} pts spent</span>
+            @if (reward.expiryDate) {
+              <span class="expiry">Expires {{ reward.expiryDate | date:'d MMM y' }}</span>
+            }
+          </div>
+        </article>
+      }
+      @if (displayedRewards().length === 0) {
+        <div class="page-empty"><p>No rewards to display.</p></div>
+      }
+    </div>
+  }
+</section>

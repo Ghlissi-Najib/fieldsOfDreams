@@ -1,0 +1,67 @@
+<section class="leaderboard-page">
+  <header class="lb-hero">
+    <h1>🏆 Leaderboard</h1>
+    <p>Compete with players worldwide and climb the ranks!</p>
+  </header>
+
+  <!-- Type Filter -->
+  <div class="lb-filters">
+    @for (type of types; track type) {
+      <button
+        class="lb-filter-btn"
+        [class.active]="selectedType() === type"
+        (click)="onTypeChange(type)">
+        {{ type }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="lb-loading">
+      <div class="spinner"></div>
+      <p>Loading leaderboard…</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="lb-error">
+      <p>{{ error() }}</p>
+      <button class="lb-retry-btn" (click)="load()">Retry</button>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (!isLoading() && !error()) {
+    <div class="lb-table-wrapper">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Total Points</th>
+            <th>Weekly</th>
+            <th>Monthly</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of entries(); track entry.id) {
+            <tr [class.top-three]="entry.rank <= 3">
+              <td class="rank-cell">{{ getRankIcon(entry.rank) }}</td>
+              <td class="username-cell">{{ entry.username || 'Anonymous' }}</td>
+              <td class="points-cell">{{ entry.totalPoints | number }}</td>
+              <td>{{ entry.weeklyPoints | number }}</td>
+              <td>{{ entry.monthlyPoints | number }}</td>
+            </tr>
+          }
+          @if (entries().length === 0) {
+            <tr>
+              <td colspan="5" class="lb-empty">No entries yet. Be the first!</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

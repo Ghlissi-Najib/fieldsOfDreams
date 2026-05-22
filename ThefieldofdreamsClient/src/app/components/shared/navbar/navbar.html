@@ -1,0 +1,191 @@
+<nav class="navbar navbar-expand-lg fod-navbar sticky-top">
+  <div class="container-fluid fod-nav-inner">
+
+    <!-- Brand -->
+    <a class="navbar-brand fod-brand" routerLink="/home">
+      The Field <span class="fod-brand-accent">of Dreams</span>
+    </a>
+
+    <!-- Nav links -->
+    <div class="navbar-collapse fod-collapse" [class.show]="isMenuOpen">
+      <ul class="navbar-nav me-auto fod-nav-links">
+
+        <!-- Public links (always visible) -->
+        <li class="nav-item">
+          <a class="nav-link fod-link" routerLink="/home" routerLinkActive="fod-link--active"
+             [routerLinkActiveOptions]="{exact:true}" (click)="closeMenu()">
+            <i class="bi bi-house"></i>Home
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link fod-link" routerLink="/leaderboard" routerLinkActive="fod-link--active" (click)="closeMenu()">
+            <i class="bi bi-trophy"></i>Leaderboard
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link fod-link" routerLink="/matchs" routerLinkActive="fod-link--active" (click)="closeMenu()">
+            <i class="bi bi-calendar2-event"></i>Matches
+          </a>
+        </li>
+
+        <!-- Logged-in links (role-based) -->
+        <ng-container *ngIf="currentUser">
+
+          <!-- PASSENGER: game features -->
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/swipe" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-arrow-left-right"></i>Discover
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/predictions" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-graph-up-arrow"></i>Predictions
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/missions" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-lightning-charge"></i>Missions
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/tourism-routes" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-compass"></i>Routes
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/rewards" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-gift"></i>Rewards
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/wallet" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-wallet2"></i>Wallet
+            </a>
+          </li>
+
+          <!-- MERCHANT: QR management -->
+          <li class="nav-item" *ngIf="isMerchant() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/qr-codes" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-qr-code"></i>QR Codes
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isMerchant() || isPassenger() || isAdmin()">
+            <a class="nav-link fod-link" routerLink="/qr-scanner" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-qr-code-scan"></i>Scan
+            </a>
+          </li>
+
+          <!-- PARTNER: analytics view -->
+          <li class="nav-item" *ngIf="isPartner()">
+            <a class="nav-link fod-link" routerLink="/locations" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-geo-alt"></i>Locations
+            </a>
+          </li>
+
+          <!-- ADMIN + MERCHANT: campaigns -->
+          <li class="nav-item" *ngIf="isAdmin() || isMerchant()">
+            <a class="nav-link fod-link" routerLink="/campaigns" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-megaphone"></i>Campaigns
+            </a>
+          </li>
+
+          <li class="nav-item" *ngIf="isAdmin()">
+            <a class="nav-link fod-link" routerLink="/partners" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-diagram-3"></i>Partners
+            </a>
+          </li>
+
+          <!-- Analytics (admin + partner) -->
+          <li class="nav-item" *ngIf="canViewAnalytics()">
+            <a class="nav-link fod-link" routerLink="/dashboard" routerLinkActive="fod-link--active" (click)="closeMenu()">
+              <i class="bi bi-bar-chart-line"></i>Analytics
+            </a>
+          </li>
+
+        </ng-container>
+
+        <li class="nav-item">
+          <a class="nav-link fod-link" routerLink="/about" routerLinkActive="fod-link--active" (click)="closeMenu()">
+            <i class="bi bi-info-circle"></i>About
+          </a>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- Right side -->
+    <div class="fod-right">
+
+      <!-- Logged in -->
+      <ng-container *ngIf="currentUser">
+
+        <!-- Mobile nav toggle (always visible on mobile when logged in) -->
+        <button class="fod-nav-toggle d-lg-none" (click)="toggleMenu()" [class.open]="isMenuOpen">
+          <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-grid'"></i>
+        </button>
+
+        <!-- Dashboard shortcut -->
+        <a class="fod-btn-dashboard d-none d-lg-inline-flex" routerLink="/dashboard">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <!-- User menu -->
+        <div class="fod-user-menu">
+          <button class="fod-avatar-btn" (click)="toggleUserMenu()" [attr.aria-expanded]="isUserMenuOpen">
+            <div class="fod-avatar">{{ userInitials }}</div>
+          </button>
+
+          <div class="fod-user-dropdown" [class.show]="isUserMenuOpen">
+            <!-- User info header -->
+            <div class="fod-dropdown-header">
+              <span class="fod-dropdown-name">{{ currentUser.firstName || currentUser.name || 'User' }}</span>
+              <span class="fod-dropdown-role">{{ roleLabel }}</span>
+            </div>
+            <div class="fod-dropdown-divider"></div>
+
+            <a class="fod-dropdown-item" routerLink="/dashboard" (click)="closeUserMenu()">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a class="fod-dropdown-item" routerLink="/profile" (click)="closeUserMenu()">
+              <i class="bi bi-person"></i> Profile
+            </a>
+            <a class="fod-dropdown-item" routerLink="/settings" (click)="closeUserMenu()">
+              <i class="bi bi-gear"></i> Settings
+            </a>
+            <a class="fod-dropdown-item" *ngIf="isPassenger() || isAdmin()" routerLink="/my-rewards" (click)="closeUserMenu()">
+              <i class="bi bi-gift"></i> My Rewards
+            </a>
+            <a class="fod-dropdown-item" *ngIf="isPassenger() || isAdmin()" routerLink="/referrals" (click)="closeUserMenu()">
+              <i class="bi bi-people"></i> Referrals
+            </a>
+
+            <div class="fod-dropdown-divider"></div>
+            <button class="fod-dropdown-item fod-dropdown-logout" (click)="logout()">
+              <i class="bi bi-box-arrow-right"></i> Sign Out
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Guest -->
+      <ng-container *ngIf="!currentUser">
+        <a class="fod-btn-signin" routerLink="/login">Sign In</a>
+        <a class="fod-btn-register d-none d-sm-inline-flex" routerLink="/register">Register</a>
+
+        <!-- Mobile nav toggle for guests -->
+        <button class="fod-nav-toggle d-lg-none" (click)="toggleMenu()" [class.open]="isMenuOpen">
+          <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+        </button>
+      </ng-container>
+    </div>
+
+  </div>
+</nav>
