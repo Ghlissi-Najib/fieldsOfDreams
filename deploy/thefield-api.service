@@ -1,0 +1,16 @@
+[Unit]
+Description=Thefieldofdreams API (.NET)
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/opt/thefieldofdreams-api
+ExecStart=/usr/share/dotnet/dotnet /opt/thefieldofdreams-api/Thefieldofdreams.API.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=thefieldofdreams-api
+User=thefieldofdreams
+EnvironmentFile=/etc/thefieldofdreams-api.env
+
+[Install]
+WantedBy=multi-user.target
